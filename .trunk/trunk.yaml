@@ -1,0 +1,50 @@
+# This file controls the behavior of Trunk: https://docs.trunk.io/cli
+# To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
+version: 0.1
+cli:
+  version: 1.21.1-beta.20
+
+# Trunk provides extensibility via plugins. (https://docs.trunk.io/plugins)
+plugins:
+  sources:
+    - id: trunk
+      ref: v1.4.5
+      uri: https://github.com/trunk-io/plugins
+
+# Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
+runtimes:
+  enabled:
+    - node@18.12.1
+    - python@3.10.8
+
+# This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
+lint:
+  definitions:
+    - name: hello-world-linter
+      runtime: python
+      files: [c++]
+      commands:
+        - name: lint
+          run: python3 ${workspace}/linters/hello_world_linter.py ${target}
+          output: sarif
+          success_codes: [0]
+          batch: true
+  enabled:
+    - bandit@1.7.8
+    - checkov@3.2.55
+    - git-diff-check
+    - isort@5.13.2
+    - prettier@3.2.5
+    - taplo@0.8.1
+    - trivy@0.50.1
+    - trufflehog@3.71.0
+    - yamllint@1.35.1
+    - black@24.3.0
+    - ruff@0.3.5
+    - hello-world-linter
+actions:
+  enabled:
+    - trunk-announce
+    - trunk-check-pre-push
+    - trunk-fmt-pre-commit
+    - trunk-upgrade-available
